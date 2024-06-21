@@ -26,7 +26,9 @@ if __name__ == "__main__":
         logging.info("Main    : thread %d done", index)
 
 #เริ่มพร้อมกัน จบพร้อมมั้ย 
+# ตอบ จบพร้อมกัน 
 #ทำให้ทาดที่ สองเพิ่มขั้นเป็น 4 วิ
+# ตอบ 
 #  if name == 1:
 #       time.sleep(4)
 #   else:

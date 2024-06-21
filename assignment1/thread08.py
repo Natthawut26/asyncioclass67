@@ -25,3 +25,5 @@ if __name__ == "__main__":
         for index in range(2):
             executor.submit(database.update, index)
     logging.info("Testing update. Ending value is %d.", database.value)
+
+#ทำไมค่า ออกเป็น 1 
