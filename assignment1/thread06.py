@@ -10,7 +10,8 @@ def thread_function(name):
 
 if __name__ == "__main__":
     format="%(asctime)s: %(message)s"
-    logging.basicConfig(format=format, level=logging.INFO, datefmt="%H:%M:%S")
+    logging.basicConfig(format=format, level=logging.INFO, 
+                        datefmt="%H:%M:%S")
     
     threads = list()
     for index in range(3):
@@ -23,3 +24,10 @@ if __name__ == "__main__":
         logging.info("Main    : before joining thread %d.", index)
         thread.join()
         logging.info("Main    : thread %d done", index)
+
+#เริ่มพร้อมกัน จบพร้อมมั้ย 
+#ทำให้ทาดที่ สองเพิ่มขั้นเป็น 4 วิ
+#  if name == 1:
+#       time.sleep(4)
+#   else:
+#       time.sleep(2)
