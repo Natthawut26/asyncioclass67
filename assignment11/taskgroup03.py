@@ -33,9 +33,11 @@ async def checkout_customer(queue: Queue, cashier_number: int):
         "taken": 0,
         "time": 0
     }
+    
     while not queue.empty():
         customer: Customer = await queue.get()
-        customer_start_time = time.perf_counter()
+        total_product_time = 0  # ตัวแปรเก็บเวลารวมที่ใช้ในการเช็คเอาท์ผลิตภัณฑ์
+        
         print(f"The Cashier_{cashier_number} "
               f"will checkout Customer_{customer.customer_id}")
              
@@ -44,21 +46,26 @@ async def checkout_customer(queue: Queue, cashier_number: int):
                   f"will checkout Customer_{customer.customer_id}'s "
                   f"Product_{product.product_name} "
                   f"in {product.checkout_time} secs")
+            
             if cashier_number == 2:
                 product.checkout_time = 0.1
             else:
-                product.checkout_time = round(product.checkout_time + (0.1*cashier_number), ndigits=2)
+                product.checkout_time = round(product.checkout_time + (0.1 * cashier_number), ndigits=2)
+            
             await asyncio.sleep(product.checkout_time)
+            total_product_time += product.checkout_time  # รวมเวลาที่ใช้ในการเช็คเอาท์ผลิตภัณฑ์
+        
         print(f"The Cashier_{cashier_number} "
               f"finished checkout Customer_{customer.customer_id} "
-              f"in {round(time.perf_counter() - customer_start_time, ndigits=2)} secs")
+              f"in {round(total_product_time, ndigits=2)} secs")  # ใช้เวลารวมที่คำนวณได้
         
         cashier_status["taken"] += 1
-        cashier_status["time"] += round(time.perf_counter() - customer_start_time, ndigits=2)
+        cashier_status["time"] += round(total_product_time, ndigits=2)  # เพิ่มเวลาที่ใช้ในการเช็คเอาท์ลูกค้า
         
         queue.task_done()
         
     return cashier_status
+
 
 # we implement the generate_customer method as a factory method for producing customers.
 #
@@ -91,7 +98,7 @@ async def customer_generation(queue: Queue, customers: int):
 # producer, and consumer, and start all concurrent tasks.
 async def main():
     CUSTOMER = 10
-    QUEUE = 3
+    QUEUE = 10
     CASHIER = 5
     customer_queue = Queue(QUEUE)
     customers_start_time = time.perf_counter()

@@ -41,18 +41,23 @@ async def checkout_customer(queue: Queue, cashier_number: int):
         print(f"The Cashier_{cashier_number} "
               f"will checkout Customer_{customer.customer_id}")
              
+        total_time_for_customer = 0  # เก็บเวลาทั้งหมดของลูกค้าในรอบนี้
+        
         for product in customer.products:
             print(f"The Cashier_{cashier_number} "
                   f"will checkout Customer_{customer.customer_id}'s "
                   f"Product_{product.product_name} "
                   f"in {product.checkout_time} secs")
+            
             await asyncio.sleep(product.checkout_time)
+            total_time_for_customer += product.checkout_time  # สะสมเวลาของแต่ละผลิตภัณฑ์
+
         print(f"The Cashier_{cashier_number} "
               f"finished checkout Customer_{customer.customer_id} "
-              f"in {round(time.perf_counter() - customer_start_time, ndigits=2)} secs")
+              f"in {round(total_time_for_customer, ndigits=2)} secs")
         
         cashier_status["taken"] += 1
-        cashier_status["time"] += round(time.perf_counter() - customer_start_time, ndigits=2)
+        cashier_status["time"] += total_time_for_customer  # เพิ่มเวลาทั้งหมดที่ใช้เช็คเอาท์ในรอบนี้
         
         queue.task_done()
         
@@ -100,13 +105,13 @@ async def main():
     
     coustomer_n = 0
     for dictionary in result[1:]:
-        print(f"The Cashier_{coustomer_n} take {dictionary["taken"]} customers total {dictionary["time"]} secs.")
+        print(f"The Cashier_{coustomer_n} take {dictionary['taken']} customers "
+              f"total {round(dictionary['time'], ndigits=2)} secs.")
         coustomer_n += 1
         
     print(f"\nThe supermarket process finished "
           f"{customer_producer.result()} customers "
           f"in {round(time.perf_counter() - customer_start_time, ndigits=2)} secs")
-    
     
 if __name__ == "__main__":
     asyncio.run(main())
